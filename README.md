@@ -11,9 +11,9 @@ AlbaCallback - обработчик для обратного вызова от 
 
 Пример использования для инициации транзакции:
 
-       $service = new AlbaService(<service-id>, '<service-name>', '<service-secret>');
+       $service = new AlbaService(<service-id>, '<service-secret>');
        try {
-           $service->init_payment('mc', 10, 'Test', 'test@example.com', '71111111111');
+           $service->initPayment('mc', 10, 'Test', 'test@example.com', '71111111111');
        } catch (AlbaException $e) {
            echo $e->getMessage();
        }
@@ -27,7 +27,7 @@ AlbaCallback - обработчик для обратного вызова от 
            }
        }
 
-       $service1 = new AlbaService(<service1-id>, '<service1-name>', '<service1-secret>');
-       $service2 = new AlbaService(<service2-id>, '<service2-name>', '<service2-secret>');
+       $service1 = new AlbaService(<service1-id>, '<service1-secret>');
+       $service2 = new AlbaService(<service2-id>, '<service2-secret>');
        $callback = new MyAlbaCallback(array($service1, $service2]));
        $callback->handle(<массив-c-POST-данными>)

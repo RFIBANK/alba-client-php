@@ -16,13 +16,11 @@ class AlbaService {
 
     /**
      * @param integer $service_id идентификатор сервиса
-     * @param string $user_name имя пользователя
      * @param string $secret секретный ключ сервиса
      */
-    public function __construct($service_id, $user_name, $secret)
+    public function __construct($service_id, $secret)
     {
         $this->service_id = $service_id;
-        $this->user_name = $user_name;
         $this->secret = $secret;
     }
 
