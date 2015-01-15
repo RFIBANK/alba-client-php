@@ -207,9 +207,15 @@ class AlbaService {
      */
     public function transactionDetails($tid)
     {
-        $fields = array('api_key' => $this->secret,
-                        'tid' => $tid);
         $url = static::BASE_URL . "a1lite/details/";
+        $fields = array('tid' => $tid,
+                        "version" => "2.0");
+        $fields['check'] = $this->sign(
+            "POST",
+            $url,
+            $fields,
+            $this->secret
+        );
         $answer = $this->_curl($url, $fields);
         return $answer;
     }
@@ -220,10 +226,16 @@ class AlbaService {
      */
     public function refund($tid, $amount)
     {
-        $fields = array('api_key' => $this->secret,
-                        'amount' => $amount,
-                        'tid' => $tid);
         $url = static::BASE_URL . "a1lite/refund/";
+        $fields = array('amount' => $amount,
+                        "version" => "2.0",
+                        'tid' => $tid);
+        $fields['check'] = $this->sign(
+            "POST",
+            $url,
+            $fields,
+            $this->secret
+        );
         $answer = $this->_curl($url, $fields);
         return $answer;
     }
@@ -234,9 +246,16 @@ class AlbaService {
      */
     public function gateDetails($gate)
     {
-        $fields = array('api_key' => $this->secret,
-                        'gate' => $gate);
         $url = static::BASE_URL . "a1lite/gate_details/";
+        $fields = array('version' => "2.0",
+                        'gate' => $gate,
+                        'service_id' => $this->service_id);
+        $fields['check'] = $this->sign(
+            "GET",
+            $url,
+            $fields,
+            $this->secret
+        );
         $answer = $this->_curl($url . "?" . http_build_query($fields));
         return $answer;
     }
