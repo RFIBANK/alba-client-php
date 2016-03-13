@@ -189,6 +189,7 @@ class AlbaService {
         }
 
         $url = static::BASE_URL . "a1lite/input/";
+
         $fields['check'] = $this->sign(
             "POST",
             $url,
@@ -224,12 +225,15 @@ class AlbaService {
      * @brief проведение возврата
      * @param string $gate короткое имя шлюза
      */
-    public function refund($tid, $amount)
+    public function refund($tid, $amount, $test=False)
     {
         $url = static::BASE_URL . "a1lite/refund/";
         $fields = array('amount' => $amount,
                         "version" => "2.0",
                         'tid' => $tid);
+        if ($test) {
+            $fields['test'] = '1';
+        }
         $fields['check'] = $this->sign(
             "POST",
             $url,
