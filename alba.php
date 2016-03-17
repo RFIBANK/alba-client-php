@@ -172,7 +172,8 @@ class AlbaService {
      * @throw AlbaException
      * @return array
      */
-    public function initPayment($pay_type, $cost, $name, $email, $phone, $order_id=False)
+    public function initPayment($pay_type, $cost, $name, $email, $phone,
+                                $order_id=False, $comission='partner')
     {
         $fields = array(
             "cost" => $cost,
@@ -180,6 +181,7 @@ class AlbaService {
             "email" => $email,
             "phone_number" => $phone,
             "background" => "1",
+            "comission" => $comission,
             "type" => $pay_type,
             "service_id" => $this->service_id,
             "version" => "2.0"
