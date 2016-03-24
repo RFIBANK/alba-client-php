@@ -157,7 +157,7 @@ class AlbaService {
     {
         $check = md5($this->service_id . $this->secret);
 
-        $url = static::BASE_URL . "a1lite/pay_types/?service_id=$this->service_id&check=$check";
+        $url = static::BASE_URL . "alba/pay_types/?service_id=$this->service_id&check=$check";
         $answer = $this->_curl($url);
         return $answer->types;
     }
@@ -190,7 +190,7 @@ class AlbaService {
             $fields['order_id'] = $order_id;
         }
 
-        $url = static::BASE_URL . "a1lite/input/";
+        $url = static::BASE_URL . "alba/input/";
 
         $fields['check'] = $this->sign(
             "POST",
@@ -210,7 +210,7 @@ class AlbaService {
      */
     public function transactionDetails($tid)
     {
-        $url = static::BASE_URL . "a1lite/details/";
+        $url = static::BASE_URL . "alba/details/";
         $fields = array('tid' => $tid,
                         "version" => "2.0");
         $fields['check'] = $this->sign(
@@ -232,7 +232,7 @@ class AlbaService {
      */
     public function refund($tid, $amount=False, $test=False, $reason=False)
     {
-        $url = static::BASE_URL . "a1lite/refund/";
+        $url = static::BASE_URL . "alba/refund/";
         $fields = array("version" => "2.0",
                         'tid' => $tid);
 
@@ -264,7 +264,7 @@ class AlbaService {
      */
     public function gateDetails($gate)
     {
-        $url = static::BASE_URL . "a1lite/gate_details/";
+        $url = static::BASE_URL . "alba/gate_details/";
         $fields = array('version' => "2.0",
                         'gate' => $gate,
                         'service_id' => $this->service_id);
