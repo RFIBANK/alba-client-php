@@ -225,17 +225,29 @@ class AlbaService {
 
     /**
      * @brief проведение возврата
-     * @param string $gate короткое имя шлюза
+     * @param string int $tid - идентификатор транзакции
+     * @param string mixed $amount - сумма возврата
+     * @param string bool $test - проводить ли тестовый возврат
+     * @param string mixed $reason - причина возврата
      */
-    public function refund($tid, $amount, $test=False)
+    public function refund($tid, $amount=False, $test=False, $reason=False)
     {
         $url = static::BASE_URL . "a1lite/refund/";
-        $fields = array('amount' => $amount,
-                        "version" => "2.0",
+        $fields = array("version" => "2.0",
                         'tid' => $tid);
+
+        if ($amount) {
+            $fields['amount'] = $amount;
+        }
+
         if ($test) {
             $fields['test'] = '1';
         }
+
+        if ($reason) {
+            $fields['reason'] = $reason;
+        }
+
         $fields['check'] = $this->sign(
             "POST",
             $url,
