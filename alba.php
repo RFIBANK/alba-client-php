@@ -1,5 +1,6 @@
 <?php
 
+
 class AlbaException extends Exception
 {
     public function __construct($message, $code)
@@ -10,8 +11,46 @@ class AlbaException extends Exception
 }
 
 
-class AlbaService {
+class RecurrentParams
+{
+    const FIRST = 'first';
+    const NEXT = 'next';
+    const BY_REQUEST = 'byrequest';
+
+    static function first_pay($url, $comment)
+    {
+        $fields = array(
+            'recurrent_type' => static::FIRST,
+            'recurrent_comment' => $comment,
+            'recurrent_url' => $url,
+            'recurrent_period' => static::BY_REQUEST
+        );
+
+        return new RecurrentParams($fields);
+    }
+
+    static function next_pay($order_id)
+    {
+        $fields = array(
+            'recurrent_type' => static::NEXT,
+            'recurrent_order_id' => $order_id,
+        );
+        return new RecurrentParams($fields);
+    }
+
+    public function __construct($fields)
+    {
+        $this->fields = $fields;
+    }
+
+}
+
+
+class AlbaService
+{
     const BASE_URL = 'https://partner.rficb.ru/';
+    const CARD_TOKEN_URL = 'https://secure.rficb.ru/cardtoken/';
+    const CARD_TOKEN_TEST_URL = 'https://test.rficb.ru/cardtoken/';
     const CURL_TIMEOUT = 45;
 
     /**
@@ -31,6 +70,7 @@ class AlbaService {
      */
     protected function _log($level, $message)
     {
+        // echo $message . "\n";
     }
 
     /**
@@ -173,7 +213,9 @@ class AlbaService {
      * @return array
      */
     public function initPayment($pay_type, $cost, $name, $email, $phone,
-                                $order_id=False, $commission='partner')
+                                $order_id=False, $commission='partner',
+                                $card_token=False,
+                                $recurrent_params=False)
     {
         $fields = array(
             "cost" => $cost,
@@ -188,6 +230,14 @@ class AlbaService {
         );
         if ($order_id !== False) {
             $fields['order_id'] = $order_id;
+        }
+
+        if ($card_token !== False) {
+            $fields['card_token'] = $card_token;
+        }
+
+        if ($recurrent_params !== False) {
+            $fields = array_merge($fields, $recurrent_params->fields);
         }
 
         $url = static::BASE_URL . "alba/input/";
@@ -276,6 +326,33 @@ class AlbaService {
         );
         $answer = $this->_curl($url . "?" . http_build_query($fields));
         return $answer;
+    }
+
+    /**
+     * @brief Создание токена для каты
+     * @param array $post Массив $_POST параметров
+     */
+    public function createCardToken($card, $exp_month, $exp_year, $cvc, $test, $card_holder=NULL)
+    {
+        $month = sprintf('%02s', $exp_month);
+
+        $fields = array(
+            'service_id' => $this->service_id,
+            'card' => $card,
+            'exp_month' => $month,
+            'exp_year' => $exp_year,
+            'cvc' => $cvc
+        );
+
+        if ($card_holder) {
+            $fields['card_holder'] = $card_holder;
+        }
+
+        $base_url = $test?static::CARD_TOKEN_TEST_URL:static::CARD_TOKEN_URL;
+
+        $answer = $this->_curl($base_url . 'create', $fields);
+
+        return $answer->token;
     }
 
     /**
